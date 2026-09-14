@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ReTech - Evaluation Detail</title>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAHDs7rzfJbk9Vcj-i0A6EB2WRbmC6zqhY",
+            authDomain: "fyp-retech.firebaseapp.com",
+            projectId: "fyp-retech",
+            storageBucket: "fyp-retech.firebasestorage.app",
+            messagingSenderId: "555799764209",
+            appId: "1:555799764209:web:5395d324437d64618f5d50",
+            measurementId: "G-ESKJZ8ZH8P"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        window.auth = auth;
+        window.db = db;
+        window.onAuthStateChanged = onAuthStateChanged;
+        window.signOut = signOut;
+        window.doc = doc;
+        window.getDoc = getDoc;
+
+        console.log("Firebase + Firestore initialized for History Detail!");
+    </script>
+
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <nav class="top-nav">
+            <div class="nav-left">
+                <div class="logo-small">RE<span class="blue-text">TECH</span></div>
+            </div>
+            <div class="nav-right">
+                <a href="dashboard.html" class="nav-link">Home</a>
+                <a href="evaluate.html" class="nav-link">Evaluate</a>
+                <a href="history.html" class="nav-link active">History</a>
+                <button id="logoutBtn" class="nav-logout">Logout</button>
+            </div>
+        </nav>
+
+        <div class="dashboard-content">
+            <div class="history-detail-container">
+                <div class="detail-back">
+                    <a href="history.html" class="back-link">← Back to History</a>
+                </div>
+
+                <div id="detailContent">
+                    <div class="history-empty">
+                        <p>⏳ Loading evaluation details...</p>
+                    </div>
+                </div>
+
+                <footer class="dashboard-footer">
+                    <p>© 2026 ReTech. All rights reserved.</p>
+                </footer>
+            </div>
+        </div>
+    </div>
+
+    <script src="history-detail.js"></script>
+</body>
+</html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>ReTech - Login</title>
+
+    <!-- ===== FIREBASE SDK ===== -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAHDs7rzfJbk9Vcj-i0A6EB2WRbmC6zqhY",
+            authDomain: "fyp-retech.firebaseapp.com",
+            projectId: "fyp-retech",
+            storageBucket: "fyp-retech.firebasestorage.app",
+            messagingSenderId: "555799764209",
+            appId: "1:555799764209:web:5395d324437d64618f5d50",
+            measurementId: "G-ESKJZ8ZH8P"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        window.auth = auth;
+        window.signInWithEmailAndPassword = signInWithEmailAndPassword;
+
+        console.log("Firebase initialized!");
+    </script>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="login-container">
+
+        <div class="login-card">
+
+            <!-- Logo -->
+            <div class="logo">
+                <div class="logo-circle">◉</div>
+                <span>RE<span class="blue-text">TECH</span></span>
+            </div>
+
+            <!-- Title -->
+            <h1>Welcome to ReTech</h1>
+
+            <p class="subtitle">
+                Gadget Resale Evaluation System
+            </p>
+
+            <!-- Login Form -->
+            <form id="loginForm">
+
+                <!-- Email -->
+                <label for="email">Email</label>
+                <input
+                    type="email"
+                    id="email"
+                    placeholder="Enter your email"
+                    required
+                >
+
+                <!-- Password -->
+                <div class="password-label">
+                    <label for="password">Password</label>
+                    <a href="forgot-password.html">Forgot?</a>
+                </div>
+
+                <input
+                    type="password"
+                    id="password"
+                    placeholder="Enter your password"
+                    required
+                >
+
+                <!-- Remember Me -->
+                <div class="remember-container">
+                    <input type="checkbox" id="remember">
+                    <label for="remember">Remember me</label>
+                </div>
+
+                <!-- Login Button -->
+                <button type="submit" class="login-button">
+                    LOG IN
+                </button>
+
+                <!-- Message -->
+                <p id="loginMessage"></p>
+
+            </form>
+
+            <!-- Sign Up -->
+            <p class="signup-text">
+                Don't have an account?
+                <a href="signup.html">Sign Up</a>
+            </p>
+
+            <!-- Footer -->
+            <p class="footer-text">
+                © 2026 ReTech. All rights reserved.
+            </p>
+
+        </div>
+
+    </div>
+
+    <script src="login.js"></script>
+
+</body>
+</html>

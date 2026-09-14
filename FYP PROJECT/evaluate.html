@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ReTech - Evaluate</title>
+
+    <!-- ===== FIREBASE SDK ===== -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, collection, query, where, getDocs, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAHDs7rzfJbk9Vcj-i0A6EB2WRbmC6zqhY",
+            authDomain: "fyp-retech.firebaseapp.com",
+            projectId: "fyp-retech",
+            storageBucket: "fyp-retech.firebasestorage.app",
+            messagingSenderId: "555799764209",
+            appId: "1:555799764209:web:5395d324437d64618f5d50",
+            measurementId: "G-ESKJZ8ZH8P"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        window.auth = auth;
+        window.db = db;
+        window.onAuthStateChanged = onAuthStateChanged;
+        window.signOut = signOut;
+        window.collection = collection;
+        window.query = query;
+        window.where = where;
+        window.getDocs = getDocs;
+        window.addDoc = addDoc;
+        window.serverTimestamp = serverTimestamp;
+
+        console.log("Firebase + Firestore initialized for Evaluate!");
+    </script>
+
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- TOP NAV -->
+        <nav class="top-nav">
+            <div class="nav-left">
+                <div class="logo-small">RE<span class="blue-text">TECH</span></div>
+            </div>
+            <div class="nav-right">
+                <a href="dashboard.html" class="nav-link">Home</a>
+                <a href="evaluate.html" class="nav-link active">Evaluate</a>
+                <a href="#" class="nav-link">History</a>
+                <button id="logoutBtn" class="nav-logout">Logout</button>
+            </div>
+        </nav>
+
+        <div class="dashboard-content">
+            <div class="evaluate-container">
+                <!-- Header -->
+                <div class="evaluate-header">
+                    <h2>🔍 Evaluate Your Gadget</h2>
+                    <p>Find out your device's estimated resale value</p>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="progress-container">
+                    <div class="progress-steps">
+                        <div class="step-indicator active" id="step1Indicator">
+                            <span class="step-number">1</span>
+                            <span class="step-label">Category</span>
+                        </div>
+                        <div class="step-line" id="line1"></div>
+                        <div class="step-indicator" id="step2Indicator">
+                            <span class="step-number">2</span>
+                            <span class="step-label">Details</span>
+                        </div>
+                        <div class="step-line" id="line2"></div>
+                        <div class="step-indicator" id="step3Indicator">
+                            <span class="step-number">3</span>
+                            <span class="step-label">Condition</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 1: CATEGORY -->
+                <div class="evaluate-step" id="step1">
+                    <h3>Select Your Device Category</h3>
+                    <p class="step-description">Choose the type of gadget you want to evaluate</p>
+                    <div class="category-grid">
+                        <div class="category-card" data-category="Smartphone" onclick="selectCategory(this)">
+                            <div class="category-icon">📱</div>
+                            <h4>Smartphone</h4>
+                        </div>
+                        <div class="category-card" data-category="Laptop" onclick="selectCategory(this)">
+                            <div class="category-icon">💻</div>
+                            <h4>Laptop</h4>
+                        </div>
+                        <div class="category-card" data-category="Tablet" onclick="selectCategory(this)">
+                            <div class="category-icon">📟</div>
+                            <h4>Tablet</h4>
+                        </div>
+                        <div class="category-card" data-category="Smartwatch" onclick="selectCategory(this)">
+                            <div class="category-icon">⌚</div>
+                            <h4>Smartwatch</h4>
+                        </div>
+                    </div>
+                    <div class="step-actions">
+                        <button class="btn-next" onclick="goToStep(2)" id="step1Next" disabled>Next →</button>
+                    </div>
+                </div>
+
+                <!-- STEP 2: DETAILS -->
+                <div class="evaluate-step" id="step2" style="display:none;">
+                    <h3>Enter Device Details</h3>
+                    <p class="step-description">Provide information about your gadget</p>
+                    <div class="details-form">
+                        <!-- Brand Dropdown -->
+                        <div class="form-group">
+                            <label for="brand">Brand</label>
+                            <select id="brand" onchange="loadModels()">
+                                <option value="">Select a brand</option>
+                            </select>
+                        </div>
+
+                        <!-- Model Dropdown -->
+                        <div class="form-group">
+                            <label for="model">Model</label>
+                            <select id="model">
+                                <option value="">Select a model</option>
+                            </select>
+                        </div>
+
+                        <!-- Storage Dropdown -->
+                        <div class="form-group">
+                            <label for="storage">Storage</label>
+                            <select id="storage">
+                                <option value="">Select storage</option>
+                            </select>
+                        </div>
+
+                        <!-- RAM Dropdown -->
+                        <div class="form-group">
+                            <label for="ram">RAM</label>
+                            <select id="ram">
+                                <option value="">Select RAM</option>
+                            </select>
+                        </div>
+
+                        <!-- Original Price & Device Age -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="originalPrice">Original Price (RM)</label>
+                                <input type="number" id="originalPrice" placeholder="e.g. 4000" required />
+                            </div>
+                            <div class="form-group">
+                                <label for="deviceAge">Device Age (Years)</label>
+                                <input type="number" id="deviceAge" placeholder="e.g. 2" min="0" step="0.5" required />
+                            </div>
+                        </div>
+
+                        <!-- Warranty -->
+                        <div class="form-group">
+                            <label for="warranty">Warranty Status</label>
+                            <select id="warranty">
+                                <option value="yes">Yes</option>
+                                <option value="no" selected>No</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="step-actions">
+                        <button class="btn-back" onclick="goToStep(1)">← Back</button>
+                        <button class="btn-next" onclick="goToStep(3)">Next →</button>
+                    </div>
+                </div>
+
+                <!-- STEP 3: CONDITION -->
+                <div class="evaluate-step" id="step3" style="display:none;">
+                    <h3>Device Condition</h3>
+                    <p class="step-description">Rate the condition of your gadget</p>
+                    <div class="condition-grid">
+                        <div class="condition-group">
+                            <label>Overall Condition</label>
+                            <div class="condition-options">
+                                <button class="condition-btn" data-condition="excellent" onclick="selectCondition(this, 'overall')">✨ Excellent</button>
+                                <button class="condition-btn" data-condition="good" onclick="selectCondition(this, 'overall')">👍 Good</button>
+                                <button class="condition-btn" data-condition="fair" onclick="selectCondition(this, 'overall')">👌 Fair</button>
+                                <button class="condition-btn" data-condition="poor" onclick="selectCondition(this, 'overall')">👎 Poor</button>
+                            </div>
+                        </div>
+
+                        <div class="condition-group">
+                            <label>Battery Condition</label>
+                            <div class="condition-options">
+                                <button class="condition-btn" data-condition="excellent" onclick="selectCondition(this, 'battery')">✨ Excellent</button>
+                                <button class="condition-btn" data-condition="good" onclick="selectCondition(this, 'battery')">👍 Good</button>
+                                <button class="condition-btn" data-condition="poor" onclick="selectCondition(this, 'battery')">👎 Poor</button>
+                            </div>
+                        </div>
+
+                        <div class="condition-group">
+                            <label>Screen Condition</label>
+                            <div class="condition-options">
+                                <button class="condition-btn" data-condition="no-damage" onclick="selectCondition(this, 'screen')">✅ No Damage</button>
+                                <button class="condition-btn" data-condition="minor-scratches" onclick="selectCondition(this, 'screen')">🔍 Minor Scratches</button>
+                                <button class="condition-btn" data-condition="cracked" onclick="selectCondition(this, 'screen')">💔 Cracked</button>
+                            </div>
+                        </div>
+
+                        <div class="condition-group">
+                            <label>Device Functionality</label>
+                            <div class="condition-options">
+                                <button class="condition-btn" data-condition="fully-functional" onclick="selectCondition(this, 'functionality')">✅ Fully Functional</button>
+                                <button class="condition-btn" data-condition="minor-issues" onclick="selectCondition(this, 'functionality')">🔧 Minor Issues</button>
+                                <button class="condition-btn" data-condition="major-issues" onclick="selectCondition(this, 'functionality')">🚨 Major Issues</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-actions">
+                        <button class="btn-back" onclick="goToStep(2)">← Back</button>
+                        <button class="btn-calculate" onclick="calculateValue()">💰 Calculate Value</button>
+                    </div>
+                </div>
+
+                <!-- STEP 4: RESULT -->
+                <div class="evaluate-step" id="stepResult" style="display:none;">
+                    <h3>📊 Evaluation Result</h3>
+                    <p class="step-description">Here's your gadget's estimated resale value</p>
+                    <div class="result-card">
+                        <div class="result-value">
+                            <span class="result-label">Estimated Resale Value</span>
+                            <span class="result-amount" id="resultAmount">RM 0</span>
+                        </div>
+                        <div class="result-details">
+                            <div class="result-item">
+                                <span class="result-item-label">Depreciation Rate</span>
+                                <span class="result-item-value" id="resultDepreciation">0%</span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-item-label">Original Price</span>
+                                <span class="result-item-value" id="resultOriginalPrice">RM 0</span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-item-label">Device Age</span>
+                                <span class="result-item-value" id="resultAge">0 years</span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-item-label">Condition</span>
+                                <span class="result-item-value" id="resultCondition">-</span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-item-label">Storage</span>
+                                <span class="result-item-value" id="resultStorage">-</span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-item-label">RAM</span>
+                                <span class="result-item-value" id="resultRam">-</span>
+                            </div>
+                        </div>
+                        <div class="result-recommendation" id="resultRecommendation">
+                            <span class="recommendation-icon">💡</span>
+                            <span class="recommendation-text">Recommendation: SELL</span>
+                        </div>
+                    </div>
+                    <div class="step-actions">
+                        <button class="btn-back" onclick="goToStep(3)">← Back</button>
+                        <button class="btn-save" onclick="saveEvaluation()">💾 Save Evaluation</button>
+                        <button class="btn-home" onclick="goHome()">🏠 Home</button>
+                    </div>
+                </div>
+            </div>
+
+            <footer class="dashboard-footer">
+                <p>© 2026 ReTech. All rights reserved.</p>
+            </footer>
+        </div>
+    </div>
+
+    <script src="evaluate.js"></script>
+</body>
+</html>

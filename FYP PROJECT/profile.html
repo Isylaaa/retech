@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ReTech - Profile</title>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, collection, query, where, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAHDs7rzfJbk9Vcj-i0A6EB2WRbmC6zqhY",
+            authDomain: "fyp-retech.firebaseapp.com",
+            projectId: "fyp-retech",
+            storageBucket: "fyp-retech.firebasestorage.app",
+            messagingSenderId: "555799764209",
+            appId: "1:555799764209:web:5395d324437d64618f5d50",
+            measurementId: "G-ESKJZ8ZH8P"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        window.auth = auth;
+        window.db = db;
+        window.onAuthStateChanged = onAuthStateChanged;
+        window.signOut = signOut;
+        window.updateProfile = updateProfile;
+        window.collection = collection;
+        window.query = query;
+        window.where = where;
+        window.getDocs = getDocs;
+        window.doc = doc;
+        window.updateDoc = updateDoc;
+
+        console.log("Firebase + Firestore initialized for Profile!");
+    </script>
+
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- TOP NAV -->
+        <nav class="top-nav">
+            <div class="nav-left">
+                <div class="logo-small">RE<span class="blue-text">TECH</span></div>
+            </div>
+            <div class="nav-right">
+                <a href="dashboard.html" class="nav-link">Home</a>
+                <a href="evaluate.html" class="nav-link">Evaluate</a>
+                <a href="history.html" class="nav-link">History</a>
+                <a href="profile.html" class="nav-link active">Profile</a>
+                <button id="logoutBtn" class="nav-logout">Logout</button>
+            </div>
+        </nav>
+
+        <div class="dashboard-content">
+            <div class="profile-container">
+                <!-- Profile Header -->
+                <div class="profile-header">
+                    <div class="profile-avatar">👤</div>
+                    <div class="profile-user-info">
+                        <h2 id="profileName">User</h2>
+                        <p id="profileEmail">user@email.com</p>
+                        <p class="profile-join-date" id="profileJoinDate">Member since: Loading...</p>
+                    </div>
+                    <button class="btn-edit-profile" onclick="toggleEdit()">✏️ Edit Profile</button>
+                </div>
+
+                <!-- Stats -->
+                <div class="profile-stats">
+                    <div class="stat-card">
+                        <span class="stat-number" id="statTotalEvals">0</span>
+                        <span class="stat-label">Total Evaluations</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number" id="statTotalDevices">0</span>
+                        <span class="stat-label">Devices Evaluated</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number" id="statAvgValue">RM 0</span>
+                        <span class="stat-label">Average Value</span>
+                    </div>
+                </div>
+
+                <!-- Edit Profile Form (hidden by default) -->
+                <div class="profile-edit-form" id="editForm" style="display:none;">
+                    <h3>Edit Profile</h3>
+                    <div class="form-group">
+                        <label for="editName">Display Name</label>
+                        <input type="text" id="editName" placeholder="Enter your name" />
+                    </div>
+                    <div class="edit-actions">
+                        <button class="btn-save-profile" onclick="saveProfile()">💾 Save Changes</button>
+                        <button class="btn-cancel-edit" onclick="toggleEdit()">Cancel</button>
+                    </div>
+                </div>
+
+                <!-- Recent Evaluations -->
+                <div class="profile-recent">
+                    <h3>📋 Recent Evaluations</h3>
+                    <div id="profileRecentList">
+                        <div class="history-empty">
+                            <p>⏳ Loading your evaluations...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <footer class="dashboard-footer">
+                    <p>© 2026 ReTech. All rights reserved.</p>
+                </footer>
+            </div>
+        </div>
+    </div>
+
+    <script src="profile.js"></script>
+</body>
+</html>

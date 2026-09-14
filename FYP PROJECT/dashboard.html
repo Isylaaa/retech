@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ReTech - Dashboard</title>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, collection, query, where, getDocs, orderBy, limit, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAHDs7rzfJbk9Vcj-i0A6EB2WRbmC6zqhY",
+            authDomain: "fyp-retech.firebaseapp.com",
+            projectId: "fyp-retech",
+            storageBucket: "fyp-retech.firebasestorage.app",
+            messagingSenderId: "555799764209",
+            appId: "1:555799764209:web:5395d324437d64618f5d50",
+            measurementId: "G-ESKJZ8ZH8P"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        window.auth = auth;
+        window.db = db;
+        window.onAuthStateChanged = onAuthStateChanged;
+        window.signOut = signOut;
+        window.collection = collection;
+        window.query = query;
+        window.where = where;
+        window.getDocs = getDocs;
+        window.orderBy = orderBy;
+        window.limit = limit;
+        window.doc = doc;
+        window.getDoc = getDoc;
+
+        console.log("Firebase + Firestore initialized for Dashboard!");
+    </script>
+
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <nav class="top-nav">
+            <div class="nav-left">
+                <div class="logo-small">RE<span class="blue-text">TECH</span></div>
+            </div>
+            <div class="nav-right">
+                <a href="dashboard.html" class="nav-link active">Home</a>
+                <a href="evaluate.html" class="nav-link">Evaluate</a>
+                <a href="history.html" class="nav-link">History</a>
+                <a href="profile.html" class="nav-link">Profile</a>
+                <a href="compare.html" class="nav-link">Compare</a>
+                <a href="notifications.html" class="nav-link notification-link">
+                    🔔 <span id="notificationBadge" class="notification-badge" style="display:none;">0</span>
+                </a>
+                <button id="logoutBtn" class="nav-logout">Logout</button>
+            </div>
+        </nav>
+
+        <div class="dashboard-content">
+            <div class="welcome-section">
+                <h2>👋 Welcome back, <span id="userName">User</span>!</h2>
+                <p class="welcome-subtitle">Know what your gadget is worth.</p>
+            </div>
+
+            <div class="carousel-container">
+                <div class="carousel-track" id="carouselTrack">
+                    <div class="carousel-slide">
+                        <img src="banner1.jpg" alt="Quick Evaluation" class="banner-image" />
+                    </div>
+                    <div class="carousel-slide">
+                        <img src="banner2.jpg" alt="Track Depreciation" class="banner-image" />
+                    </div>
+                    <div class="carousel-slide">
+                        <img src="banner3.jpg" alt="Make Better Decisions" class="banner-image" />
+                    </div>
+                    <div class="carousel-slide">
+                        <img src="banner4.jpg" alt="Know Your Value" class="banner-image" />
+                    </div>
+                </div>
+                <div class="carousel-dots" id="carouselDots">
+                    <span class="dot active" data-index="0"></span>
+                    <span class="dot" data-index="1"></span>
+                    <span class="dot" data-index="2"></span>
+                    <span class="dot" data-index="3"></span>
+                </div>
+            </div>
+
+            <div class="features-section">
+                <h3 class="section-title">YOUR PERFECT GADGET PARTNER</h3>
+                <p class="section-subtitle">Make Smarter Tech Decisions</p>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">📊</div>
+                        <h4>Know Your Value</h4>
+                        <p>Get an accurate estimated resale value for your smartphone, laptop, or tablet.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📉</div>
+                        <h4>Track Depreciation</h4>
+                        <p>Understand how age and condition affect your gadget's market worth over time.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">💡</div>
+                        <h4>Make Better Decisions</h4>
+                        <p>Decide with confidence whether to sell, keep, or upgrade your current device.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">⚡</div>
+                        <h4>Quick Evaluation</h4>
+                        <p>Get a free, instant estimated value by entering your gadget's details. No price tags.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cta-section">
+                <button class="cta-button" onclick="startEvaluation()">🚀 START EVALUATION</button>
+                <a href="compare.html" class="compare-button">🔄 Compare Devices</a>
+            </div>
+
+            <div class="history-section">
+                <h3 class="section-title">📋 Recent Evaluations</h3>
+                <div id="recentEvaluationsList">
+                    <div class="history-empty">
+                        <p>⏳ Loading your evaluations...</p>
+                    </div>
+                </div>
+                <div class="view-all-container">
+                    <a href="history.html" class="view-all-btn">📂 View All History →</a>
+                </div>
+            </div>
+
+            <footer class="dashboard-footer">
+                <p>© 2026 ReTech. All rights reserved.</p>
+            </footer>
+        </div>
+    </div>
+
+    <script src="dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ReTech - Sign Up</title>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAHDs7rzfJbk9Vcj-i0A6EB2WRbmC6zqhY",
+            authDomain: "fyp-retech.firebaseapp.com",
+            projectId: "fyp-retech",
+            storageBucket: "fyp-retech.firebasestorage.app",
+            messagingSenderId: "555799764209",
+            appId: "1:555799764209:web:5395d324437d64618f5d50",
+            measurementId: "G-ESKJZ8ZH8P"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        window.auth = auth;
+        window.createUserWithEmailAndPassword = createUserWithEmailAndPassword;
+        window.updateProfile = updateProfile;
+
+        console.log("Firebase initialized for Sign Up!");
+    </script>
+
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="logo">
+                <div class="logo-circle">◉</div>
+                <span>RE<span class="blue-text">TECH</span></span>
+            </div>
+            <h1>Create Account</h1>
+            <p class="subtitle">Start evaluating your gadgets today</p>
+            <form id="signupForm">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" placeholder="Enter your full name" required />
+                <label for="email">Email</label>
+                <input type="email" id="email" placeholder="Enter your email" required />
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="Create a password (min 6 characters)" required />
+                <label for="confirmPassword">Confirm Password</label>
+                <input type="password" id="confirmPassword" placeholder="Confirm your password" required />
+                <button type="submit" class="login-button">SIGN UP</button>
+                <p id="signupMessage"></p>
+            </form>
+            <p class="signup-text">Already have an account? <a href="index.html">Log In</a></p>
+            <p class="footer-text">© 2026 ReTech. All rights reserved.</p>
+        </div>
+    </div>
+    <script src="signup.js"></script>
+</body>
+</html>

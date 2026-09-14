@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ReTech - Device Comparison</title>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAHDs7rzfJbk9Vcj-i0A6EB2WRbmC6zqhY",
+            authDomain: "fyp-retech.firebaseapp.com",
+            projectId: "fyp-retech",
+            storageBucket: "fyp-retech.firebasestorage.app",
+            messagingSenderId: "555799764209",
+            appId: "1:555799764209:web:5395d324437d64618f5d50",
+            measurementId: "G-ESKJZ8ZH8P"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        window.auth = auth;
+        window.db = db;
+        window.onAuthStateChanged = onAuthStateChanged;
+        window.signOut = signOut;
+        window.collection = collection;
+        window.query = query;
+        window.where = where;
+        window.getDocs = getDocs;
+
+        console.log("Firebase + Firestore initialized for Compare!");
+    </script>
+
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- TOP NAV -->
+        <nav class="top-nav">
+            <div class="nav-left">
+                <div class="logo-small">RE<span class="blue-text">TECH</span></div>
+            </div>
+            <div class="nav-right">
+                <a href="dashboard.html" class="nav-link">Home</a>
+                <a href="evaluate.html" class="nav-link">Evaluate</a>
+                <a href="history.html" class="nav-link">History</a>
+                <a href="profile.html" class="nav-link">Profile</a>
+                <a href="compare.html" class="nav-link active">Compare</a>
+                <button id="logoutBtn" class="nav-logout">Logout</button>
+            </div>
+        </nav>
+
+        <div class="dashboard-content">
+            <div class="compare-container">
+                <div class="compare-header">
+                    <h2>🔄 Device Comparison</h2>
+                    <p>Compare two devices to decide which is better</p>
+                </div>
+
+                <!-- Step 1: Select First Device -->
+                <div class="compare-step">
+                    <h3>📱 Step 1: Select Your Current Device</h3>
+                    <p class="step-description">Choose a device from your history</p>
+                    <div class="form-group">
+                        <select id="device1Select" onchange="loadDevice1()">
+                            <option value="">-- Select a device --</option>
+                        </select>
+                    </div>
+                    <div id="device1Display" class="compare-device-display" style="display:none;">
+                        <!-- Device 1 details will appear here -->
+                    </div>
+                </div>
+
+                <!-- Step 2: Select Second Device -->
+                <div class="compare-step">
+                    <h3>📱 Step 2: Select Device to Compare</h3>
+                    <p class="step-description">Choose another device from your history</p>
+                    <div class="form-group">
+                        <select id="device2Select" onchange="loadDevice2()">
+                            <option value="">-- Select a device --</option>
+                        </select>
+                    </div>
+                    <div id="device2Display" class="compare-device-display" style="display:none;">
+                        <!-- Device 2 details will appear here -->
+                    </div>
+                </div>
+
+                <!-- Comparison Results -->
+                <div id="comparisonResults" style="display:none;">
+                    <div class="compare-divider">⚡ VS ⚡</div>
+                    <div class="compare-side-by-side">
+                        <div class="compare-card" id="compareDevice1">
+                            <!-- Device 1 comparison -->
+                        </div>
+                        <div class="compare-card" id="compareDevice2">
+                            <!-- Device 2 comparison -->
+                        </div>
+                    </div>
+                    
+                    <div class="compare-recommendation" id="compareRecommendation">
+                        <!-- Recommendation will appear here -->
+                    </div>
+                </div>
+
+                <footer class="dashboard-footer">
+                    <p>© 2026 ReTech. All rights reserved.</p>
+                </footer>
+            </div>
+        </div>
+    </div>
+
+    <script src="compare.js"></script>
+</body>
+</html>

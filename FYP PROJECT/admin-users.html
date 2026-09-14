@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ReTech - Manage Users</title>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAHDs7rzfJbk9Vcj-i0A6EB2WRbmC6zqhY",
+            authDomain: "fyp-retech.firebaseapp.com",
+            projectId: "fyp-retech",
+            storageBucket: "fyp-retech.firebasestorage.app",
+            messagingSenderId: "555799764209",
+            appId: "1:555799764209:web:5395d324437d64618f5d50",
+            measurementId: "G-ESKJZ8ZH8P"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        window.auth = auth;
+        window.db = db;
+        window.onAuthStateChanged = onAuthStateChanged;
+        window.signOut = signOut;
+        window.collection = collection;
+        window.getDocs = getDocs;
+
+        console.log("Firebase initialized for Manage Users!");
+    </script>
+
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- TOP NAV -->
+        <nav class="top-nav">
+            <div class="nav-left">
+                <div class="logo-small">RE<span class="blue-text">TECH</span></div>
+            </div>
+            <div class="nav-right">
+                <a href="admin-dashboard.html" class="nav-link">Dashboard</a>
+                <a href="admin-devices.html" class="nav-link">Devices</a>
+                <a href="admin-depreciation.html" class="nav-link">Depreciation</a>
+                <a href="admin-users.html" class="nav-link active">Users</a>
+                <button id="logoutBtn" class="nav-logout">Logout</button>
+            </div>
+        </nav>
+
+        <div class="dashboard-content">
+            <div class="admin-devices-container">
+                <div class="admin-header">
+                    <h2>👥 Manage Users</h2>
+                    <p>View all registered users and their activity</p>
+                </div>
+
+                <!-- Users List -->
+                <div class="admin-table-card">
+                    <h3>📋 All Users</h3>
+                    <div id="usersList">
+                        <div class="history-empty">
+                            <p>⏳ Loading users...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <footer class="dashboard-footer">
+                    <p>© 2026 ReTech. All rights reserved.</p>
+                </footer>
+            </div>
+        </div>
+    </div>
+
+    <script src="admin-users.js"></script>
+</body>
+</html>
