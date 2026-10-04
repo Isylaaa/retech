@@ -100,7 +100,6 @@ async function loadBrandsForCategory(category) {
 
         brandSelect.disabled = false;
 
-        // Reset model and spec dropdowns
         const modelSelect = document.getElementById("model");
         modelSelect.innerHTML = '<option value="">Select a model</option>';
         modelSelect.disabled = true;
@@ -177,19 +176,16 @@ async function loadModels() {
             return;
         }
 
-        // Convert to array if string
         let models = brandData.models;
         if (typeof models === 'string') {
             try { models = JSON.parse(models); } catch (e) { models = []; }
         }
 
-        // Convert storage to array if string
         let storage = brandData.storage || [];
         if (typeof storage === 'string') {
             try { storage = JSON.parse(storage); } catch (e) { storage = []; }
         }
 
-        // Convert ram to array if string
         let ram = brandData.ram || [];
         if (typeof ram === 'string') {
             try { ram = JSON.parse(ram); } catch (e) { ram = []; }
@@ -202,7 +198,6 @@ async function loadModels() {
         console.log("RAM:", ram);
         console.log("Model rates:", brandData.modelRates || {});
 
-        // Populate models
         modelSelect.innerHTML = '<option value="">Select a model</option>';
         if (Array.isArray(models) && models.length > 0) {
             models.forEach((model) => {
@@ -217,7 +212,6 @@ async function loadModels() {
             modelSelect.disabled = false;
         }
 
-        // Populate storage
         storageSelect.innerHTML = '<option value="">Select storage</option>';
         if (Array.isArray(storage) && storage.length > 0) {
             storage.forEach((item) => {
@@ -232,7 +226,6 @@ async function loadModels() {
             storageSelect.disabled = true;
         }
 
-        // Populate RAM
         ramSelect.innerHTML = '<option value="">Select RAM</option>';
         if (Array.isArray(ram) && ram.length > 0) {
             ram.forEach((item) => {
@@ -282,7 +275,6 @@ const depreciationRates = {
     "Acer": 0.18,
     "MSI": 0.15,
     "Razer": 0.15,
-    "Samsung": 0.15,
     "Microsoft": 0.15,
     "Google Laptop": 0.18,
     "Garmin": 0.15,
@@ -291,23 +283,19 @@ const depreciationRates = {
 };
 
 // ============================================================
-// GET DEPRECIATION RATE (MODEL-LEVEL SUPPORT)
+// GET DEPRECIATION RATE
 // ============================================================
 
 function getDepreciationRate(brand, model, brandData) {
-    // Check if model has a specific rate
     if (brandData && brandData.modelRates && brandData.modelRates[model] !== undefined) {
-        console.log(`✅ Using model-specific rate for ${model}: ${brandData.modelRates[model] * 100}%`);
+        console.log(`✅ Model-specific rate for ${model}: ${brandData.modelRates[model] * 100}%`);
         return brandData.modelRates[model];
     }
-    
-    // Fallback to brand rate
     if (depreciationRates[brand] !== undefined) {
-        console.log(`ℹ️ Using brand default rate for ${brand}: ${depreciationRates[brand] * 100}%`);
+        console.log(`ℹ️ Brand default rate for ${brand}: ${depreciationRates[brand] * 100}%`);
         return depreciationRates[brand];
     }
-    
-    console.warn(`⚠️ No depreciation rate found for "${brand}", using default 15%`);
+    console.warn(`⚠️ No rate for "${brand}", using 15%`);
     return 0.15;
 }
 
@@ -317,26 +305,16 @@ function getDepreciationRate(brand, model, brandData) {
 
 function getStorageMultiplier(storage) {
     const multipliers = {
-        "64GB": 0.85,
-        "128GB": 0.90,
-        "256GB": 1.00,
-        "512GB": 1.10,
-        "1TB": 1.20,
-        "2TB": 1.30
+        "64GB": 0.85, "128GB": 0.90, "256GB": 1.00,
+        "512GB": 1.10, "1TB": 1.20, "2TB": 1.30
     };
     return multipliers[storage] || 1.00;
 }
 
 function getRamMultiplier(ram) {
     const multipliers = {
-        "4GB": 0.85,
-        "6GB": 0.90,
-        "8GB": 1.00,
-        "12GB": 1.05,
-        "16GB": 1.10,
-        "24GB": 1.15,
-        "32GB": 1.20,
-        "64GB": 1.25
+        "4GB": 0.85, "6GB": 0.90, "8GB": 1.00, "12GB": 1.05,
+        "16GB": 1.10, "24GB": 1.15, "32GB": 1.20, "64GB": 1.25
     };
     return multipliers[ram] || 1.00;
 }
@@ -423,18 +401,16 @@ function selectCondition(element, type) {
 }
 
 // ============================================================
-// CALCULATE VALUE (UPDATED WITH MODEL-LEVEL DEPRECIATION)
+// CALCULATE VALUE (WITH CAP — NEVER EXCEEDS ORIGINAL PRICE)
 // ============================================================
 
 function calculateValue() {
-    // Check conditions
     if (!selectedConditions.overall || !selectedConditions.battery ||
         !selectedConditions.screen || !selectedConditions.functionality) {
         alert("Please select all condition options before calculating.");
         return;
     }
 
-    // Get form values
     const brand = document.getElementById("brand").value;
     const model = document.getElementById("model").value;
     const storage = document.getElementById("storage").value;
@@ -443,7 +419,6 @@ function calculateValue() {
     const deviceAge = parseFloat(document.getElementById("deviceAge").value);
     const warranty = document.getElementById("warranty").value;
 
-    // Validate
     if (!brand || !model) {
         alert("Please select a brand and model.");
         return;
@@ -452,15 +427,12 @@ function calculateValue() {
         alert("Please select storage.");
         return;
     }
-    
-    // Skip RAM validation for Smartwatches
     if (selectedCategory !== "Smartwatch") {
         if (!ram) {
             alert("Please select RAM.");
             return;
         }
     }
-    
     if (!originalPrice || originalPrice <= 0) {
         alert("Please enter a valid original price.");
         return;
@@ -474,25 +446,21 @@ function calculateValue() {
     const user = auth.currentUser;
     if (user) currentUserEmail = user.email;
 
-    // --- CALCULATION ---
     let baseValue = originalPrice;
 
-    // 1. Model-level depreciation (brand fallback)
+    // 1. Depreciation
     const depRate = getDepreciationRate(brand, model, currentBrandData);
     const ageDepreciation = depRate * deviceAge;
     baseValue = baseValue * (1 - ageDepreciation);
+    if (baseValue < 0) baseValue = 0;
 
-    // 2. Storage multiplier
-    const storageMultiplier = getStorageMultiplier(storage);
-    baseValue = baseValue * storageMultiplier;
+    // 2. Storage
+    baseValue = baseValue * getStorageMultiplier(storage);
 
-    // 3. RAM multiplier (skip if no RAM selected)
-    if (ram) {
-        const ramMultiplier = getRamMultiplier(ram);
-        baseValue = baseValue * ramMultiplier;
-    }
+    // 3. RAM
+    if (ram) baseValue = baseValue * getRamMultiplier(ram);
 
-    // 4. Condition multipliers
+    // 4. Conditions
     const conditionMultipliers = {
         overall: { excellent: 1.0, good: 0.85, fair: 0.70, poor: 0.50 },
         battery: { excellent: 1.0, good: 0.90, poor: 0.70 },
@@ -509,29 +477,30 @@ function calculateValue() {
     }
     baseValue = baseValue * conditionMultiplier;
 
-    // 5. Warranty bonus
+    // 5. Warranty
     if (warranty === "yes") baseValue = baseValue * 1.05;
 
-    // 6. Category adjustments
+    // 6. Category
     const categoryMultipliers = {
-        Smartphone: 1.0,
-        Laptop: 0.90,
-        Tablet: 0.85,
-        Smartwatch: 0.80
+        Smartphone: 1.0, Laptop: 0.90, Tablet: 0.85, Smartwatch: 0.80
     };
     if (categoryMultipliers[selectedCategory]) {
         baseValue = baseValue * categoryMultipliers[selectedCategory];
     }
 
-    // 7. Market factor (placeholder)
-    const marketFactor = 1.0;
-    baseValue = baseValue * marketFactor;
+    // 7. Market factor
+    baseValue = baseValue * 1.0;
 
-    // Final values
-    const estimatedValue = Math.round(baseValue);
+    // --- FINAL CAP ---
+    let estimatedValue = Math.round(baseValue);
+    if (estimatedValue > originalPrice) {
+        estimatedValue = originalPrice;
+        console.log("⚠️ Value capped at original price:", originalPrice);
+    }
+
     const depreciationPercent = Math.round((1 - estimatedValue / originalPrice) * 100);
 
-    // --- DISPLAY RESULT ---
+    // --- DISPLAY ---
     document.getElementById("resultAmount").textContent = `RM ${estimatedValue.toLocaleString()}`;
     document.getElementById("resultDepreciation").textContent = `${depreciationPercent}%`;
     document.getElementById("resultOriginalPrice").textContent = `RM ${originalPrice.toLocaleString()}`;
@@ -548,7 +517,6 @@ function calculateValue() {
     const overallLabel = conditionLabels.overall[selectedConditions.overall] || "-";
     document.getElementById("resultCondition").textContent = overallLabel;
 
-    // Recommendation
     const recommendationEl = document.getElementById("resultRecommendation");
     let recommendation = "";
     let recommendationIcon = "💡";
@@ -569,16 +537,11 @@ function calculateValue() {
         <span class="recommendation-text">Recommendation: ${recommendation}</span>
     `;
 
-    // Store result for saving
     window.lastResult = {
         category: selectedCategory,
-        brand,
-        model,
-        storage,
+        brand, model, storage,
         ram: ram || "N/A",
-        originalPrice,
-        deviceAge,
-        warranty,
+        originalPrice, deviceAge, warranty,
         estimatedValue,
         depreciationRate: depreciationPercent,
         condition: overallLabel,
